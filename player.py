@@ -13,7 +13,7 @@ class Player:
         self.moveSpeed = 200
         self.rotationSpeed = math.radians(200)
 
-    def update(self, dt):
+    def update(self, dt, map):
         keys = pygame.key.get_pressed()
         self.turnDirection = 0
         self.walkDirection = 0
@@ -29,11 +29,21 @@ class Player:
 
         moveStep = self.moveSpeed * self.walkDirection * dt
         self.rotationAngle += self.turnDirection * self.rotationSpeed * dt
-        self.x += math.cos(self.rotationAngle) * moveStep 
-        self.y += math.sin(self.rotationAngle) * moveStep 
+
+        dx = math.cos(self.rotationAngle) * moveStep
+        dy = math.sin(self.rotationAngle) * moveStep
+
+        if not map.has_wall_at(self.x + dx, self.y):
+            self.x += dx
+
+        if not map.has_wall_at(self.x, self.y + dy):
+            self.y += dy
+
 
     def render(self, screen):
         pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), self.radius)
         pygame.draw.line(screen, (0, 0, 255), (self.x, self.y), 
                          (self.x + 100 * math.cos(self.rotationAngle), 
                           self.y + 100 * math.sin(self.rotationAngle)))
+
+    
